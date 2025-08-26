@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Xin Lũi Nà</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: pink;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      height: 100vh;
+    }
+    h1 {
+      color: red;
+      margin-top: 20px;
+      transition: all 0.5s ease;
+    }
+    .gif-container {
+      width: 300px;
+      margin: 20px auto;
+      position: relative;
+    }
+    .gif-container video {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+    .gif-container video.active {
+      opacity: 1;
+      position: relative;
+      pointer-events: auto;
+    }
+    #forgiveBtn, #noBtn {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      position: absolute;
+    }
+    #forgiveBtn {
+      background-color: hotpink;
+      color: white;
+      left: 50%;
+      transform: translateX(-50%) scale(1);
+      top: 80%;
+      transition: transform 0.3s;
+    }
+    #noBtn {
+      background-color: lightgray;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="titleText">Hoi nà, bé Huỳn đừng bực anh nữa nà! 💖</h1>
+
+  <!-- Video container -->
+  <div class="gif-container" id="gifContainer">
+    <video class="active" autoplay loop muted>
+      <source src="cry.mp4" type="video/mp4">
+    </video>
+    <video autoplay loop muted>
+      <source src="hun2.mp4" type="video/mp4">
+    </video>
+    <video autoplay loop muted>
+      <source src="hun2.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- Buttons -->
+  <button id="forgiveBtn">Dạ !!!</button>
+  <button id="noBtn">Tôi Không</button>
+
+  <script>
+    const gifDivs = document.querySelectorAll(".gif-container video");
+    const forgiveBtn = document.getElementById("forgiveBtn");
+    const noBtn = document.getElementById("noBtn");
+    const titleText = document.getElementById("titleText");
+
+    let currentGif = 0;
+    let forgiveBtnScale = 1;
+
+    // "Không tha" chạy lung tung (1s)
+    const noBtnInterval = setInterval(() => {
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }, 1000);
+
+    // Khi click "Không tha" -> làm "Tha lỗi" to gấp 2
+    noBtn.addEventListener("click", () => {
+      forgiveBtnScale *= 2;
+      forgiveBtn.style.transform = `translateX(-50%) scale(${forgiveBtnScale})`;
+    });
+
+    // Khi click "Tha lỗi"
+    forgiveBtn.addEventListener("click", () => {
+      titleText.innerHTML = "Anh hứa sẽ ngoan hơn, mãiii iuuuu béeee Huỳn 😘😘😘";
+
+      forgiveBtn.style.display = "none";
+      noBtn.style.display = "none";
+      clearInterval(noBtnInterval);
+
+      // Chuyển video tiếp theo
+      gifDivs[currentGif].classList.remove("active");
+      currentGif++;
+
+      if (currentGif < gifDivs.length) {
+        gifDivs[currentGif].classList.add("active");
+
+        if (currentGif === 1) {
+          // Loop qua lại video 2 <-> video 3 mỗi 2s
+          setInterval(() => {
+            gifDivs[currentGif].classList.remove("active");
+            currentGif = currentGif === 1 ? 2 : 1;
+            gifDivs[currentGif].classList.add("active");
+          }, 2000);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
