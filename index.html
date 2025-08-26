@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Xin Lũi Nà</title>
+  <title>Xin Lỗi Bé Huỳn</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,30 +20,21 @@
     .gif-container {
       width: 300px;
       margin: 20px auto;
-      position: relative;
     }
     .gif-container video {
-      opacity: 0;
-      position: absolute;
-      top: 0;
-      left: 0;
+      display: none;
       width: 100%;
       border-radius: 20px;
-      overflow: hidden;
-      transition: opacity 0.5s ease;
-      pointer-events: none;
     }
     .gif-container video.active {
-      opacity: 1;
-      position: relative;
-      pointer-events: auto;
+      display: block;
     }
     #forgiveBtn, #noBtn {
-      padding: 10px 20px;
+      padding: 40px 80px;
       margin: 10px;
       border: none;
       border-radius: 10px;
-      font-size: 18px;
+      font-size: 38px;
       cursor: pointer;
       position: absolute;
     }
@@ -63,21 +54,20 @@
 <body>
   <h1 id="titleText">Hoi nà, bé Huỳn đừng bực anh nữa nà! 💖</h1>
 
-  <!-- Video container -->
-  <video class="active" autoplay loop muted playsinline>
-  <source src="cry.mp4" type="video/mp4">
-</video>
-<video autoplay loop muted playsinline>
-  <source src="hun1.mp4" type="video/mp4">
-</video>
-<video autoplay loop muted playsinline>
-  <source src="hun2.mp4" type="video/mp4">
-</video>
+  <!-- GIF container (dùng video local) -->
+  <div class="gif-container" id="gifContainer">
+    <video src="cry.mp4" autoplay loop muted playsinline class="active"></video>
+    <video src="hun1.mp4" autoplay loop muted playsinline></video>
+    <video src="hun2.mp4" autoplay loop muted playsinline></video>
+  </div>
 
   <!-- Buttons -->
   <button id="forgiveBtn">Dạ !!!</button>
   <button id="noBtn">Tôi Không</button>
-
+<audio id="bgMusic" autoplay loop muted>
+  <source src="music.mp3" type="audio/mpeg">
+  Trình duyệt không hỗ trợ audio.
+</audio>
   <script>
     const gifDivs = document.querySelectorAll(".gif-container video");
     const forgiveBtn = document.getElementById("forgiveBtn");
@@ -86,30 +76,40 @@
 
     let currentGif = 0;
     let forgiveBtnScale = 1;
+const bgMusic = document.getElementById("bgMusic");
 
-    // "Không tha" chạy lung tung (1s)
+// Khi người dùng click nút bất kỳ thì bật nhạc có tiếng
+document.addEventListener("click", () => {
+  bgMusic.muted = false;
+  bgMusic.play();
+}, { once: true }); // chỉ cần bật 1 lần
+
+    // "Không tha" chạy chậm hơn (2 giây/lần)
     const noBtnInterval = setInterval(() => {
       const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
       const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
-    }, 1000);
+    }, 2000);
 
     // Khi click "Không tha" -> làm "Tha lỗi" to gấp 2
     noBtn.addEventListener("click", () => {
       forgiveBtnScale *= 2;
       forgiveBtn.style.transform = `translateX(-50%) scale(${forgiveBtnScale})`;
+      console.log("Click nút Không tha → nút Tha lỗi x2");
     });
 
     // Khi click "Tha lỗi"
     forgiveBtn.addEventListener("click", () => {
+      // Đổi nội dung chữ trong h1
       titleText.innerHTML = "Anh hứa sẽ ngoan hơn, mãiii iuuuu béeee Huỳn 😘😘😘";
 
+      // Ẩn cả hai nút
       forgiveBtn.style.display = "none";
       noBtn.style.display = "none";
       clearInterval(noBtnInterval);
 
-      // Chuyển video tiếp theo
+      // Chuyển GIF tiếp theo
       gifDivs[currentGif].classList.remove("active");
       currentGif++;
 
@@ -117,16 +117,15 @@
         gifDivs[currentGif].classList.add("active");
 
         if (currentGif === 1) {
-          // Loop qua lại video 2 <-> video 3 mỗi 2s
+          // Loop GIF 2 ↔ GIF 3 mỗi 3s
           setInterval(() => {
             gifDivs[currentGif].classList.remove("active");
             currentGif = currentGif === 1 ? 2 : 1;
             gifDivs[currentGif].classList.add("active");
-          }, 2000);
+          }, 3000);
         }
       }
     });
   </script>
 </body>
 </html>
-
